@@ -49,6 +49,7 @@ public class HttpRequestDispatcher {
         } catch (UserNotFoundException e) {
             httpResponse.sendError(e.httpStatus, e.getMessage());
         } catch (InvocationTargetException e) {
+            logger.error(e.getCause().getMessage());
             if (e.getCause() instanceof SessionNotFoundException ex) {
                 httpResponse.sendError(ex.httpStatus, ex.getMessage());
             } else if (e.getCause() instanceof UserNotFoundException ex) {

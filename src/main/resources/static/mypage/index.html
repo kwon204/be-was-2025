@@ -34,10 +34,20 @@
                 <img class="profile" />
               </div>
               <div class="profile_frame">
+                <form method="post" enctype="multipart/form-data" action="/user/profile">
                   <div class="btn_profile">
-                        <div class="btn_container">수정</div>
+                    <div class="btn_container">
+                      <button
+                              class="btn"
+                              type="submit">
+                        수정
+                      </button>
+                    </div>
+                    <input type="file" accept="image/*" name="image"/>
                   </div>
-                  <div class="btn_bar"></div>
+                </form>
+
+                <div class="btn_bar"></div>
                   <div class="btn_profile">
                       <div class="btn_container">삭제</div>
                   </div>
