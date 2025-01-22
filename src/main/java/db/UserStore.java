@@ -47,7 +47,7 @@ public class UserStore {
             rs.close();
             pstmt.close();
             conn.close();
-            return Optional.of(new User(id, name, password, email));
+            return Optional.of(new User(id, password, name, email));
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
@@ -65,7 +65,7 @@ public class UserStore {
                 String name = rs.getString("name");
                 String password = rs.getString("password");
                 String email = rs.getString("email");
-                User user = new User(id, name, password, email);
+                User user = new User(id, password, name, email);
                 users.add(user);
             }
 
