@@ -29,8 +29,9 @@ public class UserHandler {
         String userId = data.get("userId");
         String username = data.get("username");
         String password = data.get("password");
+        String email = data.get("email");
 
-        if (!validateRegistrationInfo(userId, username, password)) {
+        if (!validateRegistrationInfo(userId, username, password, email)) {
             response.redirect("/registration/failed.html");
             return;
         }
@@ -38,7 +39,7 @@ public class UserHandler {
         UserStore.findUserById(userId) .ifPresentOrElse(user -> {
                 response.redirect("/registration/failed.html");
             }, () -> {
-                User user = new User(userId, password, username, "", null);
+                User user = new User(userId, password, username, email, null);
                 UserStore.addUser(user);
 
                 response.redirect("/");
@@ -146,8 +147,8 @@ public class UserHandler {
         return true;
     }
 
-    private boolean validateRegistrationInfo(String userId, String username, String password) {
-        return validateUserId(userId) && validatePassword(password) && validateUsername(username);
+    private boolean validateRegistrationInfo(String userId, String username, String password, String email) {
+        return validateUserId(userId) && validatePassword(password) && validateUsername(username) && validateUserEmail(email);
     }
 
     private boolean validateLoginInfo(String userId, String password) {
@@ -177,6 +178,16 @@ public class UserHandler {
             return false;
         }
         if (username.isBlank()|| username.contains(" ") || username.length() > 100) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateUserEmail(String email) {
+        if(email == null) {
+            return false;
+        }
+        if (email.isBlank() || !email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$") || email.length() > 320) {
             return false;
         }
         return true;

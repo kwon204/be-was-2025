@@ -30,6 +30,9 @@
               class="input_textfield"
               placeholder="아이디를 입력해주세요"
               autocomplete="username"
+              minlength="1"
+              maxlength="20"
+              required="required"
               name="userId"
             />
           </div>
@@ -39,7 +42,23 @@
               class="input_textfield"
               placeholder="닉네임을 입력해주세요"
               autocomplete="username"
+              required="required"
+              minlength="1"
+              maxlength="100"
               name="username"
+            />
+          </div>
+          <div class="textfield textfield_size_s">
+            <p class="title_textfield">이메일</p>
+            <input
+                    class="input_textfield"
+                    placeholder="이메일을 입력해주세요"
+                    autocomplete="email"
+                    name="email"
+                    type="email"
+                    minlength="1"
+                    maxlength="320"
+                    required="required"
             />
           </div>
           <div class="textfield textfield_size_s">
@@ -49,6 +68,9 @@
               type="password"
               placeholder="비밀번호를 입력해주세요"
               autocomplete="current-password"
+              required="required"
+              minlength="1"
+              maxlength="20"
               name="password"
             />
           </div>
