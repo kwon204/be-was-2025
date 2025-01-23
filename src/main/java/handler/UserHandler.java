@@ -136,18 +136,37 @@ public class UserHandler {
     }
 
     private boolean validatePasswordChange(String password, String passwordRepeat) {
-        if (password == null || passwordRepeat == null) {
-            return false;
-        }
-        if (password.isBlank() || !password.matches("^[a-zA-Z\\d!@#$%^&*(),.?\":{}|<>]+$") || password.length() > 20) {
-            return false;
-        }
-
-        if (passwordRepeat.isBlank() || !passwordRepeat.matches("^[a-zA-Z\\d!@#$%^&*(),.?\":{}|<>]+$") || passwordRepeat.length() > 20) {
+        if (!validatePassword(password) || !validatePassword(passwordRepeat)) {
             return false;
         }
 
         if (!password.equals(passwordRepeat)) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateRegistrationInfo(String userId, String username, String password) {
+        return validateUserId(userId) && validatePassword(password) && validateUsername(username);
+    }
+
+    private boolean validateLoginInfo(String userId, String password) {
+        return validateUserId(userId) && validatePassword(password);
+    }
+
+    private boolean validatePassword(String password) {
+        if (password == null) return false;
+        if (password.isBlank() || !password.matches("^[a-zA-Z\\d!@#$%^&*(),.?\":{}|<>]+$") || password.length() > 20) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateUserId(String userId) {
+        if (userId == null) {
+            return false;
+        }
+        if (userId.isBlank() || !userId.matches("^[a-zA-Z][a-zA-Z0-9]*$") || userId.length() > 20) {
             return false;
         }
         return true;
@@ -160,43 +179,6 @@ public class UserHandler {
         if (username.isBlank()|| username.contains(" ") || username.length() > 100) {
             return false;
         }
-        return true;
-    }
-
-
-    private boolean validateRegistrationInfo(String userId, String username, String password) {
-        if (userId == null || username == null || password == null) {
-            return false;
-        }
-
-        if (userId.isBlank() || !userId.matches("^[a-zA-Z][a-zA-Z0-9]*$") || userId.length() > 20) {
-            return false;
-        }
-
-        if (password.isBlank() || !password.matches("^[a-zA-Z\\d!@#$%^&*(),.?\":{}|<>]+$") || password.length() > 20) {
-            return false;
-        }
-
-        if (username.isBlank() || username.contains(" ") || username.length() > 100) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private boolean validateLoginInfo(String userId, String password) {
-        if (userId == null || password == null) {
-            return false;
-        }
-
-        if (userId.isBlank() || !userId.matches("^[a-zA-Z][a-zA-Z0-9]*$") || userId.length() > 20) {
-            return false;
-        }
-
-        if (password.isBlank() || !password.matches("^[a-zA-Z\\d!@#$%^&*(),.?\":{}|<>]+$") || password.length() > 20) {
-            return false;
-        }
-
         return true;
     }
 }
