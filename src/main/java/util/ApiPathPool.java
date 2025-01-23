@@ -45,21 +45,26 @@ public class ApiPathPool {
         Method createUser = userHandler.getClass().getDeclaredMethod("createUser", HttpRequest.class, HttpResponse.class);
         Method loginUser = userHandler.getClass().getDeclaredMethod("loginUser", HttpRequest.class, HttpResponse.class);
         Method logoutUser = userHandler.getClass().getDeclaredMethod("logoutUser", HttpRequest.class, HttpResponse.class);
+        Method profileUser = userHandler.getClass().getDeclaredMethod("profileUser", HttpRequest.class, HttpResponse.class);
 
         ConcurrentHashMap<HttpMethod, Method> createUserMethods = new ConcurrentHashMap<>();
         ConcurrentHashMap<HttpMethod, Method> loginUserMethods = new ConcurrentHashMap<>();
         ConcurrentHashMap<HttpMethod, Method> logoutUserMethods = new ConcurrentHashMap<>();
+        ConcurrentHashMap<HttpMethod, Method> profileUserMethods = new ConcurrentHashMap<>();
 
         createUserMethods.put(HttpMethod.POST, createUser);
         loginUserMethods.put(HttpMethod.POST, loginUser);
         logoutUserMethods.put(HttpMethod.POST, logoutUser);
+        profileUserMethods.put(HttpMethod.POST, profileUser);
 
         methodMap.put("/user/create", createUserMethods);
         methodMap.put("/user/login", loginUserMethods);
         methodMap.put("/user/logout", logoutUserMethods);
+        methodMap.put("/user/profile", profileUserMethods);
         classMap.put("/user/create", userHandler);
         classMap.put("/user/login", userHandler);
         classMap.put("/user/logout", userHandler);
+        classMap.put("/user/profile", userHandler);
 
         Constructor<ArticleHandler> articleHandlerConstructor = ArticleHandler.class.getDeclaredConstructor();
         ArticleHandler articleHandler = articleHandlerConstructor.newInstance();

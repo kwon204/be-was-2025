@@ -3,6 +3,7 @@ package util;
 import util.exception.NoSuchPathException;
 
 import java.io.*;
+import java.util.UUID;
 
 public class FileUtils {
     private static final String ROOT_PATH = "./src/main/resources/static";
@@ -43,4 +44,14 @@ public class FileUtils {
         return new String(b, "utf-8");
     }
 
+    public static String saveImage(String fileName, byte[] body) throws IOException {
+        String extension = fileName.substring(fileName.lastIndexOf("."));
+
+        String filePath = UUID.randomUUID().toString().substring(0, 7) + extension;
+        try (FileOutputStream fos = new FileOutputStream(ROOT_PATH + "/img/bucket/" + filePath)) {
+            fos.write(body);
+            fos.flush();
+        }
+        return filePath;
+    }
 }

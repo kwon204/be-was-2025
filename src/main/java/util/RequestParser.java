@@ -6,14 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.exception.InvalidRequestLineSyntaxException;
 
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLDecoder;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RequestParser {
     private static final Logger logger = LoggerFactory.getLogger(RequestParser.class);
@@ -122,5 +117,128 @@ public class RequestParser {
         }
 
         return map;
+    }
+
+    public static Map<String, String> parseMultipart(byte[] body, String boundary) throws IOException {
+        Map<String, String> map = new HashMap<>();
+        byte[] boundaryBytes = boundary.getBytes();
+        byte[] endBoundaryBytes = (boundary + "--").getBytes();
+
+        logger.debug("parseMultipart start... boundary: {}", boundary);
+
+        int index = 0;
+        int len = body.length;
+
+        while(index < len) {
+            int nextBoundary = findBoundary(body, boundaryBytes, index);
+            if (nextBoundary == -1) {
+                break;
+            }
+
+            int partStart = index + boundaryBytes.length + 2;
+            int partEnd = findBoundary(body, boundaryBytes, partStart);
+            if (partEnd == -1) {
+                partEnd = findBoundary(body, endBoundaryBytes, partStart);
+                if (partEnd == -1) {
+                    break;
+                }
+            }
+
+            int headerEnd = findDCRLF(body, partStart);
+            if (headerEnd == -1) {
+                break;
+            }
+
+            String contentHeader = new String(body, partStart, headerEnd - partStart).trim();
+            byte[] partBody = Arrays.copyOfRange(body, headerEnd + 4, partEnd - 2);
+
+            logger.debug("contentHeader: {}", contentHeader);
+            logger.debug("from parseMultipart, body: {}", new String(partBody));
+
+            String key = parseContentDisposition(contentHeader, "name");
+            String fileName = parseContentDisposition(contentHeader, "filename");
+            if (key == null) {
+                throw new RuntimeException("multipart name is null");
+            }
+            if (fileName != null) {
+                String newFileName = FileUtils.saveImage(fileName, partBody);
+                map.put(key, newFileName);
+            } else {
+                map.put(key, new String(partBody));
+            }
+
+            index = partEnd;
+        }
+        return map;
+    }
+
+    private static int findDCRLF(byte[] body, int start) {
+        for (int i = start; i < body.length - 3; i++) {
+            if (body[i] == '\r' && body[i + 1] == '\n' && body[i + 2] == '\r' && body[i + 3] == '\n') {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static int findBoundary(byte[] body, byte[] boundaryBytes, int start) {
+        for (int i = start; i <= body.length - boundaryBytes.length; i++) {
+            boolean match = true;
+            for (int j = 0; j < boundaryBytes.length; j++) {
+                if (body[i + j] != boundaryBytes[j]) {
+                    match = false;
+                    break;
+                }
+            }
+            if (match) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static String parseContentDisposition(String header, String key) {
+        String[] lines = header.split(CRLF);
+        for(String line : lines) {
+            if (line.toLowerCase().startsWith(HttpHeader.CONTENT_DISPOSITION.value().toLowerCase())) {
+                String[] tokens = line.split(";");
+                for (String token: tokens) {
+                   token = token.trim();
+                    if (token.startsWith(key + "=")) {
+                        String[] parts = token.split("=");
+                        return parts[1].trim().replace("\"", "");
+                    }
+                }
+
+            }
+        }
+
+        return null;
+    }
+
+    public static Map<String ,String> parseRequestBody(HttpRequest request) throws IOException {
+        if (!request.getHeaders().containsKey(HttpHeader.CONTENT_TYPE.value().toLowerCase())) {
+            throw new IllegalArgumentException();
+        }
+        String fieldValue = request.getHeaders().get(HttpHeader.CONTENT_TYPE.value().toLowerCase());
+        String[] tokens = fieldValue.trim().split(";");
+        String contentType = tokens[0];
+
+        MimeType mimeType = MimeType.findMimeType(contentType);
+        logger.debug("MimeType: {}", mimeType.getMimeType());
+
+        if (mimeType == MimeType.APPLICATION_URLENCODED) {
+            return parseBody(new String(request.getBody()));
+        } else if (mimeType == MimeType.MULTIPART_FORM_DATA) {
+            if (tokens.length < 2) {
+                throw new RuntimeException();
+            }
+            String boundary = tokens[1].split("=")[1].trim();
+            boundary = "--" + boundary;
+            return parseMultipart(request.getBody(), boundary);
+        } else {
+            throw new RuntimeException();
+        }
+
     }
 }
