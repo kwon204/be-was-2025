@@ -40,6 +40,7 @@ class ArticleStoreTest {
         query = "create table if not exists ARTICLE (" +
                 "ID int NOT NULL, " +
                 "CONTENT varchar(1000) NOT NULL, " +
+                "IMAGE varchar(255) NOT NULL, " +
                 "USER_ID varchar(10) NOT NULL, " +
                 "PRIMARY KEY (ID), " +
                 "FOREIGN KEY (USER_ID) REFERENCES USERS (ID))";
@@ -65,7 +66,7 @@ class ArticleStoreTest {
     @Test
     @DisplayName("게시글 등록 테스트")
     public void test1() {
-        Article article = new Article("test content", user);
+        Article article = new Article("test content", user, "image.g");
 
         ArticleStore.addArticle(article);
 
@@ -83,8 +84,8 @@ class ArticleStoreTest {
     @Test
     @DisplayName("모든 게시글 보기 테스트")
     public void test2() {
-        Article article1 = new Article("test content1", user);
-        Article article2 = new Article("test content2", user);
+        Article article1 = new Article("test content1", user, "image g");
+        Article article2 = new Article("test content2", user, "image.g");
 
 
         ArticleStore.addArticle(article1);

@@ -42,6 +42,7 @@ class CommentStoreTest {
         query = "create table if not exists ARTICLE (" +
                 "ID int NOT NULL, " +
                 "CONTENT varchar(1000) NOT NULL, " +
+                "IMAGE varchar(255) NOT NULL, " +
                 "USER_ID varchar(10) NOT NULL, " +
                 "PRIMARY KEY (ID), " +
                 "FOREIGN KEY (USER_ID) REFERENCES USERS (ID))";
@@ -62,7 +63,7 @@ class CommentStoreTest {
         user = new User("testUser", "1234", "testUser", "abc@a.c", "image.g");
         UserStore.addUser(user);
 
-        article = new Article("testArticle", user);
+        article = new Article("testArticle", user, "image.g");
         ArticleStore.addArticle(article);
     }
 
