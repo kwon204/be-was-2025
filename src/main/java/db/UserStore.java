@@ -99,4 +99,34 @@ public class UserStore {
             throw new InternalServerException(e.getMessage());
         }
     }
+
+    public static void updateUsername(User user, String username) {
+        String sql = "update USERS set name=? where id=?";
+        try (Connection conn = Database.getConnection()) {
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, username);
+            pstmt.setString(2, user.getUserId());
+
+            pstmt.executeUpdate();
+            pstmt.close();
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+            throw new InternalServerException(e.getMessage());
+        }
+    }
+
+    public static void updateUserPassword(User user, String password) {
+        String sql = "update USERS set password=? where id=?";
+        try (Connection conn = Database.getConnection()) {
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, password);
+            pstmt.setString(2, user.getUserId());
+
+            pstmt.executeUpdate();
+            pstmt.close();
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+            throw new InternalServerException(e.getMessage());
+        }
+    }
 }

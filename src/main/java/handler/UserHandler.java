@@ -110,6 +110,59 @@ public class UserHandler {
         response.redirect("/mypage");
     }
 
+    public void changeUser(HttpRequest request, HttpResponse response) throws IOException {
+        if (!SessionUtils.isLogin(request)) {
+            response.redirect("/");
+            return;
+        }
+
+        Session session = SessionUtils.findSession(request);
+        User user = UserStore.findUserById(session.userId())
+                .orElseThrow(() -> new UserNotFoundException("해당 사용자가 없습니다."));
+
+        Map<String, String> data = RequestParser.parseRequestBody(request);
+
+        String username = data.get("username");
+        String password = data.get("password");
+        String passwordRepeat = data.get("password_repeat");
+
+        if (validateUsername(username)){
+            UserStore.updateUsername(user, username);
+        }
+        if (validatePasswordChange(password, passwordRepeat)) {
+            UserStore.updateUserPassword(user, password);
+        }
+        response.redirect("/main");
+    }
+
+    private boolean validatePasswordChange(String password, String passwordRepeat) {
+        if (password == null || passwordRepeat == null) {
+            return false;
+        }
+        if (password.isBlank() || !password.matches("^[a-zA-Z\\d!@#$%^&*(),.?\":{}|<>]+$") || password.length() > 20) {
+            return false;
+        }
+
+        if (passwordRepeat.isBlank() || !passwordRepeat.matches("^[a-zA-Z\\d!@#$%^&*(),.?\":{}|<>]+$") || passwordRepeat.length() > 20) {
+            return false;
+        }
+
+        if (!password.equals(passwordRepeat)) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateUsername(String username) {
+        if (username == null){
+            return false;
+        }
+        if (username.isBlank()|| username.contains(" ") || username.length() > 100) {
+            return false;
+        }
+        return true;
+    }
+
 
     private boolean validateRegistrationInfo(String userId, String username, String password) {
         if (userId == null || username == null || password == null) {
