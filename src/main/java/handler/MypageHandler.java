@@ -36,6 +36,7 @@ public class MypageHandler implements Handler{
         User user = UserStore.findUserById(session.userId())
                 .orElseThrow(() -> new UserNotFoundException("해당 사용자가 없습니다."));
         content = DynamicHtmlEditor.edit(content, "username", user.getName());
+        content = DynamicHtmlEditor.edit(content, "image", user.getImagePath());
 
 
         byte[] body = content.getBytes();

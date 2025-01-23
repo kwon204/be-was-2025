@@ -47,6 +47,7 @@ public class WebServer {
                     "NAME varchar(100) NOT NULL, " +
                     "PASSWORD varchar(100) NOT NULL, " +
                     "EMAIL varchar(320), " +
+                    "PROFILE varchar(255), " +
                     "PRIMARY KEY (ID))";
 
             stmt.execute(query);

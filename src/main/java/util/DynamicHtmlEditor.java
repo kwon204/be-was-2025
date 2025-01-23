@@ -66,6 +66,7 @@ public class DynamicHtmlEditor {
         String element = getArticleElement();
         element = edit(element, "author", article.getUser().getName());
         element = edit(element, "content", article.getContent());
+        element = edit(element, "authorImage", article.getUser().getImagePath());
 
         return element;
     }
@@ -89,7 +90,7 @@ public class DynamicHtmlEditor {
         return
                 """
                     <div class="post__account">
-                      <img class="post__account__img" />
+                      <img class="post__account__img" src="./img/bucket/{{ dynamic:authorImage }}" />
                           <p class="post__account__nickname">{{ dynamic:author }}</p>
                     </div>
                     <img class="post__img" />
@@ -97,17 +98,17 @@ public class DynamicHtmlEditor {
                       <ul class="post__menu__personal">
                         <li>
                           <button class="post__menu__btn">
-                            <img src="../img/like.svg" />
+                            <img src="./img/like.svg" />
                           </button>
                         </li>
                         <li>
                           <button class="post__menu__btn">
-                            <img src="../img/sendLink.svg" />
+                            <img src="./img/sendLink.svg" />
                           </button>
                         </li>
                       </ul>
                       <button class="post__menu__btn">
-                        <img src="../img/bookMark.svg" />
+                        <img src="./img/bookMark.svg" />
                       </button>
                     </div>
                     <p class="post__article">

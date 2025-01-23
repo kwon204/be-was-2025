@@ -13,7 +13,7 @@ public class UserStore {
     private static final Logger logger = LoggerFactory.getLogger(UserStore.class);
 
     public static void addUser(User user) {
-        String sql = "insert into USERS values(?, ?, ?, ?)";
+        String sql = "insert into USERS values(?, ?, ?, ?, ?)";
         try (Connection conn = Database.getConnection()){
             PreparedStatement pstmt = conn.prepareStatement(sql);
 
@@ -21,6 +21,7 @@ public class UserStore {
             pstmt.setString(2, user.getName());
             pstmt.setString(3, user.getPassword());
             pstmt.setString(4, user.getEmail());
+            pstmt.setString(5, user.getImagePath());
 
             pstmt.executeUpdate();
 
@@ -31,7 +32,7 @@ public class UserStore {
     }
 
     public static Optional<User> findUserById(String userId) {
-        String sql = "select id, name, password, email from USERS where id=?";
+        String sql = "select id, name, password, email, profile from USERS where id=?";
         try (Connection conn = Database.getConnection()){
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, userId);
@@ -43,11 +44,12 @@ public class UserStore {
             String name = rs.getString("name");
             String password = rs.getString("password");
             String email = rs.getString("email");
+            String profileImage = rs.getString("profile");
 
             rs.close();
             pstmt.close();
             conn.close();
-            return Optional.of(new User(id, password, name, email));
+            return Optional.of(new User(id, password, name, email, profileImage));
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
@@ -56,7 +58,7 @@ public class UserStore {
 
     public static List<User> findAll() {
         List<User> users = new ArrayList<>();
-        String sql = "select id, name, password, email from USERS";
+        String sql = "select id, name, password, email, profile from USERS";
         try (Connection conn = Database.getConnection()){
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
@@ -65,7 +67,8 @@ public class UserStore {
                 String name = rs.getString("name");
                 String password = rs.getString("password");
                 String email = rs.getString("email");
-                User user = new User(id, password, name, email);
+                String profile = rs.getString("profile");
+                User user = new User(id, password, name, email, profile);
                 users.add(user);
             }
 
@@ -78,5 +81,21 @@ public class UserStore {
             logger.error(e.getMessage());
         }
         return users;
+    }
+
+    public static boolean updateUserProfileImage(User user, String filePath) {
+        String sql = "update USERS set profile=? where id=?";
+        try (Connection conn = Database.getConnection()) {
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, filePath);
+            pstmt.setString(2, user.getUserId());
+
+            pstmt.executeUpdate();
+            pstmt.close();
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+            return false;
+        }
+        return true;
     }
 }
