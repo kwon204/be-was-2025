@@ -202,3 +202,6 @@ gradle-app.setting
 *.hprof
 
 # End of https://www.toptal.com/developers/gitignore/api/gradle,intellij,java,macos
+
+### image file
+**/img/bucket
