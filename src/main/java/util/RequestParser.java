@@ -164,7 +164,9 @@ public class RequestParser {
                 String newFileName = FileUtils.saveImage(fileName, partBody);
                 map.put(key, newFileName);
             } else {
-                map.put(key, new String(partBody));
+                String value = new String(partBody);
+                String decodedValue = URLDecoder.decode(value, "utf-8");
+                map.put(key, decodedValue);
             }
 
             index = partEnd;
