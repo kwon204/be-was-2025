@@ -4,6 +4,7 @@ import model.Comment;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.exception.InternalServerException;
 import util.exception.UserNotFoundException;
 
 import java.sql.Connection;
@@ -31,6 +32,7 @@ public class CommentStore {
             pstmt.close();
         } catch (SQLException e) {
             logger.error(e.getMessage());
+            throw new InternalServerException(e.getMessage());
         }
     }
 
@@ -58,8 +60,8 @@ public class CommentStore {
             return Optional.of(new Comment(id, content, user));
         } catch(SQLException e) {
             logger.error(e.getMessage());
+            throw new InternalServerException(e.getMessage());
         }
-        return Optional.empty();
     }
 
     public static List<Comment> findAllByArticle(int articleId) {
@@ -88,8 +90,8 @@ public class CommentStore {
             return comments;
         } catch(SQLException e) {
             logger.error(e.getMessage());
+            throw new InternalServerException(e.getMessage());
         }
-        return comments;
     }
 
     public static List<Comment> findAll() {
@@ -112,7 +114,7 @@ public class CommentStore {
             return comments;
         } catch (SQLException e){
             logger.error(e.getMessage());
+            throw new InternalServerException(e.getMessage());
         }
-        return comments;
     }
 }

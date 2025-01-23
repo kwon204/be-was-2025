@@ -94,7 +94,7 @@ public class ApiPathPool {
             return false;
         }
         if (!methodMap.get(path).containsKey(method)) {
-            throw new NotAllowedMethodException();
+            throw new NotAllowedMethodException("지원하지 않는 method 입니다.");
         }
         return true;
     }

@@ -30,8 +30,8 @@ public class UserHandler {
         String username = data.get("username");
         String password = data.get("password");
 
-        if (userId == null || username == null || password == null) {
-            response.redirect("/registration");
+        if (!validateRegistrationInfo(userId, username, password)) {
+            response.redirect("/registration/failed.html");
             return;
         }
 
@@ -49,11 +49,11 @@ public class UserHandler {
 
     public void loginUser(HttpRequest request, HttpResponse response) throws IOException {
         Map<String, String> data = RequestParser.parseRequestBody(request);
-//        Map<String, String> data = RequestParser.parseBody(new String(request.getBody()));
+
         String userId = data.get("userId");
         String password = data.get("password");
-        if (userId == null || password == null) {
-            logger.debug("data is null");
+
+        if (!validateLoginInfo(userId, password)) {
             response.redirect("/login/failed.html");
             return;
         }
@@ -67,7 +67,8 @@ public class UserHandler {
 
                 Cookie cookie = new Cookie();
                 cookie.setPath("/");
-                cookie.setMaxAge(180);
+                cookie.setMaxAge(360);
+                cookie.setHttpOnly(true);
                 Session session = new Session(cookie.getValue(), user.getUserId());
 
                 SessionStore.addSession(cookie.getValue(), session);
@@ -103,10 +104,46 @@ public class UserHandler {
 
         String filePath = data.get("image");
 
-        if (!UserStore.updateUserProfileImage(user, filePath)) {
-            throw new IOException("사용자가 업데이트 되지 않았습니다.");
-        }
+        UserStore.updateUserProfileImage(user, filePath);
+
 
         response.redirect("/mypage");
+    }
+
+
+    private boolean validateRegistrationInfo(String userId, String username, String password) {
+        if (userId == null || username == null || password == null) {
+            return false;
+        }
+
+        if (userId.isBlank() || !userId.matches("^[a-zA-Z][a-zA-Z0-9]+$")) {
+            return false;
+        }
+
+        if (password.isBlank() || !password.matches("^[a-zA-Z\\d!@#$%^&*(),.?\":{}|<>]+$")) {
+            return false;
+        }
+
+        if (username.isBlank() || username.contains(" ")) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean validateLoginInfo(String userId, String password) {
+        if (userId == null || password == null) {
+            return false;
+        }
+
+        if (userId.isBlank() || !userId.matches("^[a-zA-Z][a-zA-Z0-9]+$")) {
+            return false;
+        }
+
+        if (password.isBlank() || !password.matches("^[a-zA-Z\\d!@#$%^&*(),.?\":{}|<>]+$")) {
+            return false;
+        }
+
+        return true;
     }
 }

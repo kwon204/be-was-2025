@@ -3,6 +3,7 @@ package db;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.exception.InternalServerException;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ public class UserStore {
             pstmt.close();
         } catch (SQLException e) {
             logger.error(e.getMessage());
+            throw new InternalServerException(e.getMessage());
         }
     }
 
@@ -52,8 +54,8 @@ public class UserStore {
             return Optional.of(new User(id, password, name, email, profileImage));
         } catch (SQLException e) {
             logger.error(e.getMessage());
+            throw new InternalServerException(e.getMessage());
         }
-        return Optional.empty();
     }
 
     public static List<User> findAll() {
@@ -79,11 +81,11 @@ public class UserStore {
             return users;
         } catch(SQLException e) {
             logger.error(e.getMessage());
+            throw new InternalServerException(e.getMessage());
         }
-        return users;
     }
 
-    public static boolean updateUserProfileImage(User user, String filePath) {
+    public static void updateUserProfileImage(User user, String filePath) {
         String sql = "update USERS set profile=? where id=?";
         try (Connection conn = Database.getConnection()) {
             PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -94,8 +96,7 @@ public class UserStore {
             pstmt.close();
         } catch (SQLException e) {
             logger.error(e.getMessage());
-            return false;
+            throw new InternalServerException(e.getMessage());
         }
-        return true;
     }
 }

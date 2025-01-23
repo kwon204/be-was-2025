@@ -5,6 +5,7 @@ import model.Comment;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.exception.InternalServerException;
 import util.exception.UserNotFoundException;
 
 import java.sql.*;
@@ -28,6 +29,7 @@ public class ArticleStore {
             pstmt.close();
         } catch (SQLException e) {
             logger.error(e.getMessage());
+            throw new InternalServerException(e.getMessage());
         }
     }
 
@@ -55,8 +57,8 @@ public class ArticleStore {
             return Optional.of(new Article(id, content, user, comments, image));
         } catch (SQLException e) {
             logger.error(e.getMessage());
+            throw new InternalServerException(e.getMessage());
         }
-        return Optional.empty();
     }
 
     public static List<Article> findAll() {
@@ -86,7 +88,7 @@ public class ArticleStore {
             return articles;
         } catch (SQLException e){
             logger.error(e.getMessage());
+            throw new InternalServerException(e.getMessage());
         }
-        return articles;
     }
 }

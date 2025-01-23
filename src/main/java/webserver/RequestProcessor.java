@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.RequestParser;
 import util.exception.InvalidRequestLineSyntaxException;
+import util.exception.UnsupportedMimeTypeException;
 
 import java.io.*;
 
@@ -23,9 +24,13 @@ public class RequestProcessor {
             HttpRequestDispatcher httpRequestDispatcher = new HttpRequestDispatcher(httpRequest, httpResponse);
             httpRequestDispatcher.dispatch();
         } catch (InvalidRequestLineSyntaxException e) {
-            errorResponse(dos, HttpStatus.BAD_REQUEST, e);
+            errorResponse(dos, e.httpStatus, e);
         } catch (IOException e) {
             errorResponse(dos, HttpStatus.INTERNAL_SERVER_ERROR, e);
+        } catch (IllegalArgumentException e) {
+            errorResponse(dos, HttpStatus.BAD_REQUEST, e);
+        } catch (UnsupportedMimeTypeException e) {
+            errorResponse(dos, e.httpStatus, e);
         }
     }
 

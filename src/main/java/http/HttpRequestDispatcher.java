@@ -48,6 +48,8 @@ public class HttpRequestDispatcher {
             httpResponse.sendError(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         } catch (UserNotFoundException e) {
             httpResponse.sendError(e.httpStatus, e.getMessage());
+        } catch (IllegalArgumentException e) {
+            httpResponse.sendError(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (InvocationTargetException e) {
             logger.error(e.getCause().getMessage());
             if (e.getCause() instanceof SessionNotFoundException ex) {
@@ -55,6 +57,8 @@ public class HttpRequestDispatcher {
             } else if (e.getCause() instanceof UserNotFoundException ex) {
                 httpResponse.sendError(ex.httpStatus, ex.getMessage());
             } else if (e.getCause() instanceof ArticleNotFoundException ex) {
+                httpResponse.sendError(ex.httpStatus, ex.getMessage());
+            } else if (e.getCause() instanceof InternalServerException ex) {
                 httpResponse.sendError(ex.httpStatus, ex.getMessage());
             } else {
                 httpResponse.sendError(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());

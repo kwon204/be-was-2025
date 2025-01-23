@@ -5,6 +5,7 @@ import http.constant.HttpHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.exception.InvalidRequestLineSyntaxException;
+import util.exception.UnsupportedMimeTypeException;
 
 import java.io.*;
 import java.net.URLDecoder;
@@ -55,7 +56,7 @@ public class RequestParser {
             int flag = dis.readNBytes(body, 0, len);
 
             if (flag != len) {
-                logger.debug("actual read byte: {}, expteced read byte : {}", flag, len);
+                throw new IllegalArgumentException("Content-Length 값과 실제 Body의 길이가 다릅니다.");
             }
 
             logger.debug("body: {}", new String(body));
@@ -124,8 +125,6 @@ public class RequestParser {
         byte[] boundaryBytes = boundary.getBytes();
         byte[] endBoundaryBytes = (boundary + "--").getBytes();
 
-        logger.debug("parseMultipart start... boundary: {}", boundary);
-
         int index = 0;
         int len = body.length;
 
@@ -158,7 +157,7 @@ public class RequestParser {
             String key = parseContentDisposition(contentHeader, "name");
             String fileName = parseContentDisposition(contentHeader, "filename");
             if (key == null) {
-                throw new RuntimeException("multipart name is null");
+                throw new IllegalArgumentException("멀티파트 필드 이름이 없습니다.");
             }
             if (fileName != null) {
                 String newFileName = FileUtils.saveImage(fileName, partBody);
@@ -233,13 +232,13 @@ public class RequestParser {
             return parseBody(new String(request.getBody()));
         } else if (mimeType == MimeType.MULTIPART_FORM_DATA) {
             if (tokens.length < 2) {
-                throw new RuntimeException();
+                throw new IllegalArgumentException("멀티파트 형식이 잘못되었습니다.");
             }
             String boundary = tokens[1].split("=")[1].trim();
             boundary = "--" + boundary;
             return parseMultipart(request.getBody(), boundary);
         } else {
-            throw new RuntimeException();
+            throw new UnsupportedMimeTypeException("지원하지 않는 미디어 타입입니다.");
         }
 
     }

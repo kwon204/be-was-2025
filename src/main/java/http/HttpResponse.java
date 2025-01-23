@@ -89,15 +89,11 @@ public class HttpResponse {
     public void sendError(HttpStatus httpStatus, String message) throws IOException {
         File file = FileUtils.findFile(ERROR_PAGE);
         String content = FileUtils.convertToString(file);
-        String msg = httpStatus.getReasonPhrase();
-        if (message != null && !message.isBlank()) {
-            msg = message;
-        }
-        StringBuilder body = new StringBuilder();
-        body.append(httpStatus.getStatusCode());
-        body.append("\n");
-        body.append(msg);
-        content = DynamicHtmlEditor.edit(content, "error", body.toString());
+
+        String error = String.format("%d, %s", httpStatus.getStatusCode(), httpStatus.getReasonPhrase());
+
+        content = DynamicHtmlEditor.edit(content, "error_content", error);
+        content = DynamicHtmlEditor.edit(content, "error_message", message);
         writeStatusLine(httpStatus);
         writeBody(content.getBytes(), MimeType.HTML.getMimeType());
         send();
