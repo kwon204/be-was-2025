@@ -29,11 +29,12 @@ class CommentStoreTest {
 
         Statement stmt = conn.createStatement();
 
-        String query = "create table if not exists USERS (" +
+        String query = "create table if not exists  USERS (" +
                 "ID varchar(10) NOT NULL, " +
-                "NAME varchar(20) NOT NULL, " +
+                "NAME varchar(100) NOT NULL, " +
                 "PASSWORD varchar(100) NOT NULL, " +
                 "EMAIL varchar(320), " +
+                "PROFILE varchar(255), " +
                 "PRIMARY KEY (ID))";
 
         stmt.execute(query);
@@ -58,7 +59,7 @@ class CommentStoreTest {
 
         stmt.execute(query);
 
-        user = new User("testUser", "1234", "testUser", "abc@a.c");
+        user = new User("testUser", "1234", "testUser", "abc@a.c", "image.g");
         UserStore.addUser(user);
 
         article = new Article("testArticle", user);
