@@ -36,7 +36,7 @@ public class UserHandler {
         }
 
         UserStore.findUserById(userId) .ifPresentOrElse(user -> {
-                response.redirect("/registration");
+                response.redirect("/registration/failed.html");
             }, () -> {
                 User user = new User(userId, password, username, "", null);
                 UserStore.addUser(user);
@@ -116,15 +116,15 @@ public class UserHandler {
             return false;
         }
 
-        if (userId.isBlank() || !userId.matches("^[a-zA-Z][a-zA-Z0-9]+$")) {
+        if (userId.isBlank() || !userId.matches("^[a-zA-Z][a-zA-Z0-9]*$") || userId.length() > 20) {
             return false;
         }
 
-        if (password.isBlank() || !password.matches("^[a-zA-Z\\d!@#$%^&*(),.?\":{}|<>]+$")) {
+        if (password.isBlank() || !password.matches("^[a-zA-Z\\d!@#$%^&*(),.?\":{}|<>]+$") || password.length() > 20) {
             return false;
         }
 
-        if (username.isBlank() || username.contains(" ")) {
+        if (username.isBlank() || username.contains(" ") || username.length() > 100) {
             return false;
         }
 
@@ -136,11 +136,11 @@ public class UserHandler {
             return false;
         }
 
-        if (userId.isBlank() || !userId.matches("^[a-zA-Z][a-zA-Z0-9]+$")) {
+        if (userId.isBlank() || !userId.matches("^[a-zA-Z][a-zA-Z0-9]*$") || userId.length() > 20) {
             return false;
         }
 
-        if (password.isBlank() || !password.matches("^[a-zA-Z\\d!@#$%^&*(),.?\":{}|<>]+$")) {
+        if (password.isBlank() || !password.matches("^[a-zA-Z\\d!@#$%^&*(),.?\":{}|<>]+$") || password.length() > 20) {
             return false;
         }
 

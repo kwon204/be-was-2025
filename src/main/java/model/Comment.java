@@ -1,7 +1,9 @@
 package model;
 
+import db.CommentStore;
+
 public class Comment {
-    private static int id = 0;
+    private static int id = CommentStore.findAll().size();
     private final int commentId;
     private final String content;
     private final User user;

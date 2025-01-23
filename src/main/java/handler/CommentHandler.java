@@ -56,14 +56,27 @@ public class CommentHandler implements Handler {
         String commentContent = data.get("content");
         String articleId = data.get("article");
 
+        if (!validateComment(commentContent)) {
+            httpResponse.redirect(String.format("/comment?article=%s", articleId));
+        }
+
         Article article = ArticleStore.findArticleById(Integer.parseInt(articleId))
                 .orElseThrow(() -> new ArticleNotFoundException("해당 게시글이 없습니다."));
 
         Comment comment = new Comment(commentContent, user, article);
         CommentStore.addComment(comment);
 
-        article.getComments().add(comment);
-        ArticleStore.addArticle(article);
         httpResponse.redirect("/main");
+    }
+
+    private boolean validateComment(String content) {
+        if (content == null) {
+            return false;
+        }
+        if (content.length() > 1000) {
+            return false;
+        }
+
+        return true;
     }
 }

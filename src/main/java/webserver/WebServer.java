@@ -43,9 +43,9 @@ public class WebServer {
             Statement stmt = conn.createStatement();
 
             String query = "create table if not exists  USERS (" +
-                    "ID varchar(10) NOT NULL, " +
+                    "ID varchar(20) NOT NULL, " +
                     "NAME varchar(100) NOT NULL, " +
-                    "PASSWORD varchar(100) NOT NULL, " +
+                    "PASSWORD varchar(20) NOT NULL, " +
                     "EMAIL varchar(320), " +
                     "PROFILE varchar(255), " +
                     "PRIMARY KEY (ID))";
@@ -56,7 +56,7 @@ public class WebServer {
                     "ID int NOT NULL, " +
                     "CONTENT varchar(1000) NOT NULL, " +
                     "IMAGE varchar(255) NOT NULL, " +
-                    "USER_ID varchar(10) NOT NULL, " +
+                    "USER_ID varchar(20) NOT NULL, " +
                     "PRIMARY KEY (ID), " +
                     "FOREIGN KEY (USER_ID) REFERENCES USERS (ID))";
 
@@ -65,7 +65,7 @@ public class WebServer {
             query = "create table if not exists COMMENT (" +
                     "ID int NOT NULL, " +
                     "CONTENT varchar(1000) NOT NULL, " +
-                    "USER_ID varchar(10) NOT NULL, " +
+                    "USER_ID varchar(20) NOT NULL, " +
                     "ARTICLE_ID int NOT NULL, " +
                     "PRIMARY KEY (ID), " +
                     "FOREIGN KEY (USER_ID) REFERENCES USERS (ID), " +
