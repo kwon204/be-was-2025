@@ -55,6 +55,7 @@ public class WebServer {
             query = "create table if not exists ARTICLE (" +
                     "ID int NOT NULL, " +
                     "CONTENT varchar(1000) NOT NULL, " +
+                    "IMAGE varchar(255) NOT NULL, " +
                     "USER_ID varchar(10) NOT NULL, " +
                     "PRIMARY KEY (ID), " +
                     "FOREIGN KEY (USER_ID) REFERENCES USERS (ID))";

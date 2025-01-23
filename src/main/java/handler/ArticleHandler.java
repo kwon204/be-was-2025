@@ -39,7 +39,7 @@ public class ArticleHandler implements Handler {
         httpResponse.send();
     }
 
-    public void postArticle(HttpRequest httpRequest, HttpResponse httpResponse) throws UnsupportedEncodingException {
+    public void postArticle(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
         if (!SessionUtils.isLogin(httpRequest)) {
             httpResponse.redirect("/login");
             return;
@@ -47,14 +47,15 @@ public class ArticleHandler implements Handler {
         Session session = SessionUtils.findSession(httpRequest);
         User user = UserStore.findUserById(session.userId())
                 .orElseThrow(() -> new UserNotFoundException("해당 사용자가 없습니다."));
-        String body = new String(httpRequest.getBody());
-        Map<String, String> data = RequestParser.parseBody(body);
+
+        Map<String, String> data = RequestParser.parseRequestBody(httpRequest);
 
         String content = data.get("content");
+        String imagePath = data.get("image");
 
-        Article article = new Article(content, user);
-        logger.debug("Created Article= id:{}, content:{}, username:{}", article.getArticleId(), article.getContent(),
-                article.getUser().getName());
+        Article article = new Article(content, user, imagePath);
+        logger.debug("Created Article= id:{}, content:{}, username:{}, image: {}", article.getArticleId(), article.getContent(),
+                article.getUser().getName(), imagePath);
         ArticleStore.addArticle(article);
 
         httpResponse.redirect("/main");

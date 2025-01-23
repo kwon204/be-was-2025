@@ -46,6 +46,7 @@ public class DynamicHtmlEditor {
             }
             element = edit(element, "comment_user", comment.getUser().getName());
             element = edit(element, "comment_content", comment.getContent());
+            element = edit(element, "comment_user_image", comment.getUser().getImagePath());
             commentBuilder.append(element);
         }
 
@@ -67,6 +68,7 @@ public class DynamicHtmlEditor {
         element = edit(element, "author", article.getUser().getName());
         element = edit(element, "content", article.getContent());
         element = edit(element, "authorImage", article.getUser().getImagePath());
+        element = edit(element, "articleImage", article.getImage());
 
         return element;
     }
@@ -93,7 +95,7 @@ public class DynamicHtmlEditor {
                       <img class="post__account__img" src="./img/bucket/{{ dynamic:authorImage }}" />
                           <p class="post__account__nickname">{{ dynamic:author }}</p>
                     </div>
-                    <img class="post__img" />
+                    <img class="post__img" src="./img/bucket/{{ dynamic:articleImage }}"/>
                     <div class="post__menu">
                       <ul class="post__menu__personal">
                         <li>
@@ -123,7 +125,7 @@ public class DynamicHtmlEditor {
         return """
         <li class="comment__item">
             <div class="comment__item__user">
-              <img class="comment__item__user__img" />
+              <img class="comment__item__user__img" src="./img/bucket/{{ dynamic:comment_user_image }}"/>
               <p class="comment__item__user__nickname">{{ dynamic:comment_user }}</p>
             </div>
             <p class="comment__item__article">
@@ -137,7 +139,7 @@ public class DynamicHtmlEditor {
         return """
                   <li class="comment__item hidden">
                     <div class="comment__item__user">
-                      <img class="comment__item__user__img" />
+                      <img class="comment__item__user__img" src="./img/bucket/{{ dynamic:comment_user_image }}"/>
                       <p class="comment__item__user__nickname">{{ dynamic:comment_user }}</p>
                     </div>
                     <p class="comment__item__article">{{ dynamic:comment_content }}</p>
